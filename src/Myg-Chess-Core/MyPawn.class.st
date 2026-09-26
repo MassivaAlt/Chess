@@ -6,6 +6,28 @@ Class {
 }
 
 { #category : 'helpers' }
+MyPawn >> captureCandidates [
+	| candidates |
+	candidates := self isWhite
+		ifTrue: [ { 
+			square up ifNotNil: [ :s | s left ]. 
+			square up ifNotNil: [ :s | s right ] 
+		} ]
+		ifFalse: [ { 
+			square down ifNotNil: [ :s | s left ]. 
+			square down ifNotNil: [ :s | s right ] 
+		} ].
+		
+	^ candidates reject: #isNil
+]
+
+{ #category : 'helpers' }
+MyPawn >> captureMoves [
+	^ self captureCandidates select: [ :aSquare | 
+		aSquare hasPiece and: [ aSquare contents color ~= color ] ]
+]
+
+{ #category : 'helpers' }
 MyPawn >> forwardSquare [
 	^ self isWhite
 		ifTrue: [ square up ]
@@ -52,5 +74,5 @@ MyPawn >> straightMoves [
 
 { #category : 'rendering' }
 MyPawn >> targetSquaresLegal: aBoolean [
-	^ self straightMoves
+	^ self straightMoves , self captureMoves
 ]
