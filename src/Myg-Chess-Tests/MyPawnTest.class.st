@@ -21,6 +21,18 @@ MyPawnTest >> testBlackPawnMovesAndCaptures [
 ]
 
 { #category : 'tests' }
+MyPawnTest >> testPawnCannotMoveForwardIfBlocked [
+	| board pawn blockingPiece squares |
+	board := MyChessBoard empty.
+	board at: 'e2' put: (pawn := MyPawn white).
+	board at: 'e3' put: (blockingPiece := MyPawn black).
+
+	squares := pawn targetSquares.
+
+	self assert: squares isEmpty.
+]
+
+{ #category : 'tests' }
 MyPawnTest >> testWhitePawnCapturesDiagonal [
 	| board pawn enemyTarget squares |
 	board := MyChessBoard empty.
