@@ -13,7 +13,7 @@ MyRookTests >> testId [
 
 { #category : 'tests' }
 MyRookTests >> testMoves [
-
+     "Test connexion Git"
 	| rook squares board |
 	board := MyChessBoard empty.
 	board at: 'e4' put: (rook := MyRook white).
