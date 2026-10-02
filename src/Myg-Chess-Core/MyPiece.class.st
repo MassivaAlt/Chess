@@ -106,7 +106,19 @@ MyPiece >> downFile [
 
 { #category : 'rendering' }
 MyPiece >> downFileLegal: aBoolean [
-	^ self collectSquares: [ :aSquare | aSquare down ] legal: aBoolean
+	| squares current |
+	squares := OrderedCollection new.
+	self square ifNil: [ ^ squares ].
+	
+	current := self square down.
+	[ current isNotNil ] whileTrue: [
+		squares add: current.
+	
+		current contents ifNotNil: [ ^ squares ].
+		current := current down.
+	].
+	
+	^ squares
 ]
 
 { #category : 'rendering' }
@@ -150,14 +162,17 @@ MyPiece >> isKing [
 
 { #category : 'testing' }
 MyPiece >> isKingSafe [
-	| myKing |
+	| myKing validPieces |
 	self board ifNil: [ ^ true ].
 	
-	myKing := self board pieces 
+	"On ne garde que les vraies pièces (non nil)"
+	validPieces := self board pieces select: [ :p | p isNotNil ].
+	
+	myKing := validPieces 
 		detect: [ :p | p isKing and: [ p color = self color ] ] 
 		ifNone: [ ^ true ].
 
-	^ (self board pieces select: [ :p | p color ~= self color and: [ p square isNotNil ] ])
+	^ (validPieces select: [ :p | p color ~= self color and: [ p square isNotNil ] ])
 		noneSatisfy: [ :enemy | 
 			(enemy targetSquaresLegal: false) includes: myKing square ]
 ]
