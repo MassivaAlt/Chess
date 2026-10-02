@@ -12,6 +12,19 @@ MyBishop >> id [
 ]
 
 { #category : 'rendering' }
+MyBishop >> renderOn: aSquare [
+	^ self isWhite
+		ifTrue: [
+			aSquare color isBlack
+				ifFalse: [ 'B' ]
+				ifTrue: [ 'b' ] ]
+		ifFalse: [
+			aSquare color isBlack
+				ifFalse: [ 'V' ]
+				ifTrue: [ 'v' ] ]
+]
+
+{ #category : 'rendering' }
 MyBishop >> renderPieceOn: aSquare [
 
 	^ aSquare renderBishop: self

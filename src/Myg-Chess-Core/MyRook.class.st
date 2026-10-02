@@ -11,6 +11,19 @@ MyRook >> id [
 ]
 
 { #category : 'rendering' }
+MyRook >> renderOn: aSquare [
+	^ self isWhite
+		ifFalse: [
+			aSquare color isBlack
+				ifFalse: [ 'T' ]
+				ifTrue: [ 't' ] ]
+		ifTrue: [
+			aSquare color isBlack
+				ifFalse: [ 'R' ]
+				ifTrue: [ 'r' ] ]
+]
+
+{ #category : 'rendering' }
 MyRook >> renderPieceOn: aSquare [
 
 	^ aSquare renderRook: self

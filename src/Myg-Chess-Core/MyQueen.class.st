@@ -6,6 +6,19 @@ Class {
 }
 
 { #category : 'rendering' }
+MyQueen >> renderOn: aSquare [
+	^ self isWhite
+		ifFalse: [
+			aSquare color isBlack
+				ifFalse: [ 'W' ]
+				ifTrue: [ 'w' ] ]
+		ifTrue: [
+			aSquare color isBlack
+				ifFalse: [ 'Q' ]
+				ifTrue: [ 'q' ] ]
+]
+
+{ #category : 'rendering' }
 MyQueen >> renderPieceOn: aSquare [
 
 	^ aSquare renderQueen: self

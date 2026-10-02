@@ -12,6 +12,19 @@ MyKnight >> id [
 ]
 
 { #category : 'rendering' }
+MyKnight >> renderOn: aSquare [
+	^ self isWhite
+		ifFalse: [
+			aSquare color isBlack
+				ifFalse: [ 'M' ]
+				ifTrue: [ 'm' ] ]
+		ifTrue: [
+			aSquare color isBlack
+				ifFalse: [ 'N' ]
+				ifTrue: [ 'n' ] ]
+]
+
+{ #category : 'rendering' }
 MyKnight >> renderPieceOn: aSquare [
 
 	^ aSquare renderKnight: self

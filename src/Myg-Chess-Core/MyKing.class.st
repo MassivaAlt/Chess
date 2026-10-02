@@ -70,6 +70,19 @@ MyKing >> opponentPieces [
 ]
 
 { #category : 'rendering' }
+MyKing >> renderOn: aSquare [
+	^ self isWhite
+		ifFalse: [
+			aSquare color isBlack
+				ifFalse: [ 'L' ]
+				ifTrue: [ 'l' ] ]
+		ifTrue: [
+			aSquare color isBlack
+				ifFalse: [ 'K' ]
+				ifTrue: [ 'k' ] ]
+]
+
+{ #category : 'rendering' }
 MyKing >> renderPieceOn: aSquare [
 
 	^ aSquare renderKing: self

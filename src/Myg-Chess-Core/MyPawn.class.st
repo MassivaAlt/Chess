@@ -48,6 +48,19 @@ MyPawn >> isUnmoved [
 ]
 
 { #category : 'rendering' }
+MyPawn >> renderOn: aSquare [
+	^ self isWhite
+		ifFalse: [ 
+			aSquare color isBlack
+				ifFalse: [ 'O' ]
+				ifTrue: [ 'o' ] ]
+		ifTrue: [ 
+			aSquare color isBlack
+				ifFalse: [ 'P' ]
+				ifTrue: [ 'p' ]  ]
+]
+
+{ #category : 'rendering' }
 MyPawn >> renderPieceOn: aSquare [ 
 	
 	^ aSquare renderPawn: self

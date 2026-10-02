@@ -177,6 +177,13 @@ MyPiece >> moveTo: aSquare [
 ]
 
 { #category : 'rendering' }
+MyPiece >> renderOn: aSquare [
+	^ aSquare color isBlack
+		ifFalse: [ 'z' ]
+		ifTrue: [ 'x' ]
+]
+
+{ #category : 'rendering' }
 MyPiece >> rightFile [
 
 	^ self rightFileLegal: false

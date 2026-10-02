@@ -87,11 +87,10 @@ MyChessSquare >> contents [
 
 { #category : 'accessing' }
 MyChessSquare >> contents: aPiece [
-
 	| text |
 	contents := aPiece ifNil: [ MyNullPiece new ].
 
-	text := contents renderPieceOn: self.
+	text := contents renderOn: self.
 	piece text: (text asRopedText
 			 fontSize: 48;
 			 foreground: self foreground;
