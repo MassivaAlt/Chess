@@ -73,6 +73,19 @@ MyPawn >> straightMoves [
 ]
 
 { #category : 'rendering' }
+MyPawn >> targetSquares [
+	self square ifNil: [ ^ #() ].
+	self board ifNil: [ ^ #() ].
+	^ self straightMoves , self captureMoves
+]
+
+{ #category : 'rendering' }
 MyPawn >> targetSquaresLegal: aBoolean [
+	self square ifNil: [ ^ #() ].
+	self board ifNil: [ ^ #() ].
+	
+	"Si aBoolean est false (mode simulation de contrôle de roi / attaques), seul captureMoves compte"
+	aBoolean ifFalse: [ ^ self captureMoves ].
+
 	^ self straightMoves , self captureMoves
 ]

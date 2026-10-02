@@ -65,3 +65,17 @@ MyRookTests >> testMovesWithSameColorObstacle [
 			(#( e5 e6 e7 e8 d4 c4 b4 a4 f4 e3 e2 e1 ) collect: [ :name |
 				 board at: name ])
 ]
+
+{ #category : 'tests' }
+MyRookTests >> testPinnedRookCannotMove [
+	| king rook enemyRook board |
+	board := MyChessBoard empty.
+
+	"Le Roi blanc est en e1, la Tour blanche en e2, la Tour noire en e8"
+	board at: 'e1' put: (king := MyKing white).
+	board at: 'e2' put: (rook := MyRook white).
+	board at: 'e8' put: (enemyRook := MyRook black).
+
+	"La Tour blanche clouée ne doit pas pouvoir aller sur les côtés (ex: d2)"
+	self deny: (rook legalTargetSquares includes: (board at: 'd2'))
+]
