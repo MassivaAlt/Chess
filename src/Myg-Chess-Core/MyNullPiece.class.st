@@ -17,6 +17,13 @@ MyNullPiece >> isPiece [
 ]
 
 { #category : 'rendering' }
+MyNullPiece >> renderPieceOn: aSquare [
+	^ aSquare color isBlack
+		ifFalse: [ 'z' ]
+		ifTrue: [ 'x' ]
+]
+
+{ #category : 'rendering' }
 MyNullPiece >> targetSquaresLegal: aBoolean [
 	^ #()
 ]
