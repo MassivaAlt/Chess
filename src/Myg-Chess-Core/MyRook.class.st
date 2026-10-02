@@ -31,13 +31,21 @@ MyRook >> renderPieceOn: aSquare [
 
 { #category : 'rendering' }
 MyRook >> targetSquares [
-
 	^ self upFile , self downFile , self leftFile , self rightFile
 ]
 
 { #category : 'rendering' }
 MyRook >> targetSquaresLegal: aBoolean [
+	| squares |
 
-	^ (self upFileLegal: aBoolean) , (self downFileLegal: aBoolean)
-	  , (self leftFileLegal: aBoolean) , (self rightFileLegal: aBoolean)
+	squares := (self upFileLegal: aBoolean)
+		, (self downFileLegal: aBoolean)
+		, (self leftFileLegal: aBoolean)
+		, (self rightFileLegal: aBoolean).
+
+	aBoolean ifFalse: [ ^ squares ].
+
+	^ squares select: [ :aSquare |
+		self canMoveTo: aSquare
+	]
 ]

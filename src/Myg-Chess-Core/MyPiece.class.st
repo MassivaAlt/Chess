@@ -37,6 +37,14 @@ MyPiece >> board [
 	^ square board
 ]
 
+{ #category : 'testing' }
+MyPiece >> canMoveTo: aSquare [
+	self board ifNil: [ ^ true ].
+	aSquare ifNil: [ ^ false ]. 
+
+	^ self simulateMoveTo: aSquare during: [ self isKingSafe ]
+]
+
 { #category : 'rendering' }
 MyPiece >> collectSquares: aBlock [
 
@@ -45,24 +53,36 @@ MyPiece >> collectSquares: aBlock [
 
 { #category : 'rendering' }
 MyPiece >> collectSquares: aBlock legal: shouldBeLegal [
-
 	^ self collectSquares: aBlock while: [ :aSquare |
-		  aSquare notNil and: [ shouldBeLegal ==> aSquare hasPiece not ] ]
+		aSquare notNil
+			and: [
+				shouldBeLegal not
+					or: [ aSquare hasPiece not ]
+			]
+	]
 ]
 
 { #category : 'rendering' }
 MyPiece >> collectSquares: collectBlock while: untilBlock [
-
 	| targets next |
+
 	targets := OrderedCollection new.
 
-	"Collect up right"
 	next := square.
-	[ untilBlock value: (next := collectBlock value: next) ]
-		whileTrue: [ targets add: next ].
 
-	"If we can it the next piece, then add it too"
-	(next notNil and: [ next contents color ~= color ]) ifTrue: [ targets add: next ].
+	[ untilBlock value: (next := collectBlock value: next) ]
+		whileTrue: [
+			targets add: next
+		].
+
+	next ifNotNil: [
+		next contents ifNotNil: [ :piece |
+			piece color ~= color
+				ifTrue: [
+					targets add: next
+				]
+		]
+	].
 
 	^ targets
 ]
@@ -81,14 +101,24 @@ MyPiece >> color: aColor [
 
 { #category : 'rendering' }
 MyPiece >> downFile [
-
 	^ self downFileLegal: false
 ]
 
 { #category : 'rendering' }
 MyPiece >> downFileLegal: aBoolean [
-
-	^ self collectSquares: [ :aSquare | aSquare down ] legal: aBoolean
+	| squares current |
+	squares := OrderedCollection new.
+	self square ifNil: [ ^ squares ].
+	
+	current := self square down.
+	[ current isNotNil ] whileTrue: [
+		squares add: current.
+	
+		current contents ifNotNil: [ ^ squares ].
+		current := current down.
+	].
+	
+	^ squares
 ]
 
 { #category : 'rendering' }
@@ -132,8 +162,24 @@ MyPiece >> isEmpty [
 
 { #category : 'testing' }
 MyPiece >> isKing [
-	
 	^ false
+]
+
+{ #category : 'testing' }
+MyPiece >> isKingSafe [
+	| myKing validPieces |
+	self board ifNil: [ ^ true ].
+	
+	"On ne garde que les vraies pièces (non nil)"
+	validPieces := self board pieces select: [ :p | p isNotNil ].
+	
+	myKing := validPieces 
+		detect: [ :p | p isKing and: [ p color = self color ] ] 
+		ifNone: [ ^ true ].
+
+	^ (validPieces select: [ :p | p color ~= self color and: [ p square isNotNil ] ])
+		noneSatisfy: [ :enemy | 
+			(enemy targetSquaresLegal: false) includes: myKing square ]
 ]
 
 { #category : 'testing' }
@@ -156,14 +202,16 @@ MyPiece >> leftFile [
 
 { #category : 'rendering' }
 MyPiece >> leftFileLegal: aBoolean [
-
 	^ self collectSquares: [ :aSquare | aSquare left ] legal: aBoolean
 ]
 
-{ #category : 'path commands' }
+{ #category : 'rendering' }
 MyPiece >> legalTargetSquares [
+	self board ifNil: [ ^ self targetSquares ].
 
-	^ self targetSquaresLegal: true
+	^ self targetSquares select: [ :aSquare |
+		self canMoveTo: aSquare
+	]
 ]
 
 { #category : 'path commands' }
@@ -191,8 +239,26 @@ MyPiece >> rightFile [
 
 { #category : 'rendering' }
 MyPiece >> rightFileLegal: aBoolean [
-
 	^ self collectSquares: [ :aSquare | aSquare right ] legal: aBoolean
+]
+
+{ #category : 'as yet unclassified' }
+MyPiece >> simulateMoveTo: aSquare during: aBlock [
+	| oldSquare targetContents result |
+	oldSquare := square.
+	targetContents := aSquare contents.
+
+	oldSquare ifNotNil: [ oldSquare contents: nil ].
+	square := aSquare.
+	aSquare contents: self.
+
+	result := aBlock value.
+
+	aSquare contents: targetContents.
+	square := oldSquare.
+	oldSquare ifNotNil: [ oldSquare contents: self ].
+
+	^ result
 ]
 
 { #category : 'accessing' }
@@ -208,8 +274,8 @@ MyPiece >> square: aMyChessSquare [
 
 { #category : 'rendering' }
 MyPiece >> targetSquares [
-
-	^ self targetSquaresLegal: false
+	
+	^ self subclassResponsibility
 ]
 
 { #category : 'rendering' }
@@ -226,7 +292,6 @@ MyPiece >> upFile [
 
 { #category : 'rendering' }
 MyPiece >> upFileLegal: aBoolean [
-
 	^ self collectSquares: [ :aSquare | aSquare up ] legal: aBoolean
 ]
 

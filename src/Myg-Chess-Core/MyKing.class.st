@@ -47,19 +47,18 @@ MyKing >> isCheckMated [
 
 { #category : 'testing' }
 MyKing >> isInCheck [
-	"We check if the opponent pieces target all my potential movements and myself"
-
-	| threatenedSquares |
-	threatenedSquares := self opponentPieces flatCollect: [ :e |
-		                     e attackingSquares ].
-
-	^ threatenedSquares includes: self square
+	^ self opponentPieces anySatisfy: [ :p |
+		p targetSquares includes: self square ]
 ]
 
 { #category : 'testing' }
 MyKing >> isKing [
-	
 	^ true
+]
+
+{ #category : 'rendering' }
+MyKing >> legalTargetSquares [
+	^ self targetSquaresLegal: true
 ]
 
 { #category : 'accessing' }
@@ -89,19 +88,15 @@ MyKing >> renderPieceOn: aSquare [
 ]
 
 { #category : 'rendering' }
+MyKing >> targetSquares [
+	^ self basicTargetSquares
+]
+
+{ #category : 'rendering' }
 MyKing >> targetSquaresLegal: aBoolean [
-	"The king cannot move to threatened squares"
-
 	| threatenedSquares |
-	threatenedSquares := self opponentPieces flatCollect: [ :e |
-		                     e attackingSquares ].
+	threatenedSquares := self opponentPieces flatCollect: [ :e | e targetSquares ].
 
-	^ self basicTargetSquares select: [ :s |
-		  s notNil and: [
-			  (threatenedSquares includes: s) not and: [
-				  s hasPiece not or: [ 
-					"The square has an opponent piece"
-					s contents color ~= color and: [ 
-						"Let's hope the piece is not defended"
-						threatenedSquares includes: s  ] ] ] ] ]
+	^ self targetSquares select: [ :s |
+		(threatenedSquares includes: s) not ]
 ]
